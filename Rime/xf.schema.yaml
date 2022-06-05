@@ -1,0 +1,226 @@
+# Rime schema settings
+# encoding: utf-8
+# `引导拼音反查
+
+schema:
+  schema_id: xf
+  name: 西风瘦码Soaring
+  version: "20190122"
+  author:
+    - 化外惠民
+
+  description: |
+    顶功类输入法，适合单字派。
+    码表作者：化外愚民。
+    输入法平台：中州韵输入法平台。
+  dependencies:
+    - pinyin_simp
+    - xfdz
+
+
+switches:
+  - name: _hide_candidate 
+    reset: 0
+  - name: _hide_comment
+    reset: 0
+  - name: _hide_key_hint 
+    reset: 0
+  - name: ascii_mode
+    reset: 1
+    #states: [ 中文, 英文 ]
+  - name: full_shape
+    states: [ 半角, 全角 ]
+  - options: [ _key_Left ]
+    states: [ " ← " ]
+  - options: [ _key_Up ]
+    states: [ " ↑ " ]
+  - options: [ _key_Down ]
+    states: [ " ↓ " ]
+  - options: [ _key_Right ]
+    states: [ " → " ]
+  - options: [ _key_VOICE_ASSIST]
+    states: [ "	🎤	    " ]
+  - options: [ _key_Hide ]
+   # states: [ ﹀ ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - affix_segmentor@pinyin_lookup
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+#    - reverse_lookup_translator
+    - table_translator
+    - script_translator@pinyin_lookup
+    - history_translator@history
+  filters:
+    - simplifier
+    - uniquifier
+    - simplifier@zh_simp
+    - reverse_lookup_filter@pinyin_reverse_lookup
+
+speller:
+  alphabet: zyxwvutsrqponmlkj23789ihgfedcba,./;'^*!?><$]
+  initials: "qwertyuiopasdfghjkl;zxcvbnm,."
+  finals: " "
+  auto_select: true  #顶字上屏
+
+#  use_space: true
+  algebra: 
+    #- 'xlit|_| |'
+    - "derive/^([a-z][a-z;])$/$1_/"
+#    - "derive/^([a-z][a-z])$/$1__/"
+    - "xform/_/Z/"
+
+
+# 主翻译器
+translator:
+  dictionary: xf
+  enable_charset_filter: false
+  enable_completion: true
+  enable_encoder: true
+  enable_sentence: false
+  enable_user_dict: false
+  encode_commit_history: true
+  max_phrase_length: 5
+#  preedit_format:
+#    - 'xform/Z/_/'
+
+# 滤镜
+zh_simp:
+  opencc_config: s2t.json
+  option_name: zh_simp
+
+# 副翻译器
+pinyin_lookup:
+  tag: pinyin_lookup
+  dictionary: pinyin_simp
+  prefix: "e"             #
+  tips: "〔拼音〕"
+
+history:
+  input: ";"
+  size: 1
+  initial_quality: 1000
+
+
+#反查
+pinyin_reverse_lookup:
+  tags: [ pinyin_lookup ] 
+  overwrite_comment: true
+  dictionary: xf
+  comment_format:
+    - "xform/$/〕/"
+    - "xform/^/〔/"
+    - "xform/ /, /"
+
+# 杂项
+punctuator:
+  full_shape:
+    ' ' : { commit: '　' }
+    ',' : { commit: ， }
+    '.' : { commit: 。 }
+    '<' : [ 《, 〈, «, ‹ ]
+    '>' : [ 》, 〉, », › ]
+    '?' : { commit: ？ }
+    ';' : { commit: ； }
+    ':' : { commit: ： }
+    '''' : { pair: [ '‘', '’' ] }
+    '"' : { pair: [ '“', '”' ] }
+    '/' : { commit: / }
+    '\' : [ 、, ＼ ]
+    '|' : [ ·, ｜, '§', '¦' ]
+    '`' : ｀
+    '~' : ～
+    '!' : { commit: ！ }
+    '@' : [ ＠, ☯ ]
+    '#' : [ ＃, ⌘ ]
+    '%' : [ ％, '°', '℃' ]
+#    '$' : [ ￥, '$', '€', '£', '¥', '¢', '¤' ]
+    '^' : { commit: …… }
+    '&' : ＆
+    '*' : [ ＊, ·, ・, ×, ※, ❂ ]
+    '(' : （
+    ')' : ）
+    '-' : －
+    '_' : ——
+    '+' : ＋
+    '=' : ＝
+    '[' : [ 「, 【, 〔, ［ ]
+    ']' : [ 」, 】, 〕, ］ ]
+    '{' : [ 『, 〖, ｛ ]
+    '}' : [ 』, 〗, ｝ ]
+  half_shape:
+    ',' : { commit: ， }
+    '.' : { commit: 。 }
+    '<' : [ 《, 〈, «, ‹ ]
+    '>' : [ 》, 〉, », › ]
+    '/' : { commit: / }
+    '?' : { commit: ？ }
+    ';' : { commit: ； }
+    ':' : { commit: ： }
+    '''' : { pair: [ '‘', '’' ] }
+    '"' : { pair: [ '“', '”' ] }
+    '\' : [ 、, '\', ＼ ]
+    '|' : [ ·, '|', ｜, '§', '¦' ]
+    '`' : '`'
+    '~' : [ '~', ～ ]
+    '!' : { commit: ！ }
+    '@' : '@'
+    '#' : '#'
+    '%' : [ '%', ％, '°', '℃' ]
+#    '$' : [ ￥, '$', '€', '£', '¥', '¢', '¤' ]
+    '^' : { commit: …… }
+    '&' : '&'
+    '*' : [ '*', ＊, ·, ・, ×, ※, ❂ ]
+    '(' : （
+    ')' : ）
+    '-' : '-'
+    '_' : ——
+    '+' : '+'
+    '=' : '='
+    '[' : [ 「, 【, 〔, ［ ]
+    ']' : [ 」, 】, 〕,  ］ ]
+    '{' : [ 『, 〖, ｛ ]
+    '}' : [ 』, 〗, ｝ ]
+
+ascii_composer:
+  good_old_caps_lock: true
+  switch_key:
+    Shift_L: inline_ascii
+    Shift_R: commit_text
+    Control_L: noop
+    Control_R: noop
+    Caps_Lock: commit_code
+
+
+key_binder:
+  bindings:
+    - { when: paging, accept: minus, send: Page_Up }
+    - { when: has_menu, accept: equal, send: Page_Down }
+    - { when: has_menu, accept: space, send: $ }
+    #- { when: has_menu, accept: apostrophe, send: Control+1 }
+
+recognizer:
+  patterns:
+    pinyin_lookup: "^e[a-z]*'?$"
+    punct: "^/([0-9]0?|[a-z]+)$"
+#    retention: "^[bcdfghjklmnpqrstuvwxyz][a-z;][aeio;]{0,3}$"   #防三码及以上单字和所有词组自动上屏
+
+menu:
+  page_size: 8
+  # alternative_select_keys: " aeuio"
+  # alternative_select_labels: [" ",ａ,ｅ,ｕ,ｉ,ｏ]

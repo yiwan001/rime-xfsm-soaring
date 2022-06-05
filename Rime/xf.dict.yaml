@@ -1,0 +1,20 @@
+# Rime dictionary: 西风
+# encoding: utf-8
+#
+# 西风瘦码扩展词库控制
+---
+name: xf
+version: "20201030"
+sort: by_weight 
+columns: 
+  - text
+  - code
+  - weight
+import_tables:
+  - xfdz
+  - xfcz
+  - xfuser
+  - xffh
+...
+
+
